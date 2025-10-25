@@ -1,92 +1,140 @@
 import http from 'http';
-import {parse as parseUrl} from 'url';
-
-let items = [
-  {id: 1, name: 'Item1'},
-  {id: 2, name: 'Item2'},
-];
-let nextId = 3;
-
-const sendJSON = (res, status, data) => {
-  const body = JSON.stringify(data);
-  res.writeHead(status, {'Content-Type': 'application/json'});
-  res.end(body);
-};
-
-const readBody = (req) =>
-  new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', (chunk) => (data += chunk));
-    req.on('end', () => {
-      try {
-        resolve(data ? JSON.parse(data) : {});
-      } catch {
-        reject(new Error('Invalid JSON'));
-      }
-    });
-  });
-
-const server = http.createServer(async (req, res) => {
-  const {pathname} = parseUrl(req.url, true);
-  const method = req.method;
-
-  if (pathname === '/' && method === 'GET') {
-    return sendJSON(res, 200, {message: 'Welcome to my REST API!'});
-  }
-
-  if (pathname === '/items' && method === 'GET') {
-    return sendJSON(res, 200, items);
-  }
-
-  if (pathname === '/items' && method === 'POST') {
-    try {
-      const body = await readBody(req);
-      if (!body.name) return sendJSON(res, 400, {error: 'Missing name'});
-      const newItem = {id: nextId++, name: body.name};
-      items.push(newItem);
-      return sendJSON(res, 201, newItem);
-    } catch {
-      return sendJSON(res, 400, {error: 'Invalid JSON'});
-    }
-  }
-
-  const match = pathname.match(/^\/items\/(\d+)$/);
-  if (match && method === 'GET') {
-    const id = Number(match[1]);
-    const item = items.find((i) => i.id === id);
-    if (!item) return sendJSON(res, 404, {error: 'Not Found'});
-    return sendJSON(res, 200, item);
-  }
-
-  if (match && method === 'PUT') {
-    const id = Number(match[1]);
-    const index = items.findIndex((i) => i.id === id);
-    if (index === -1) return sendJSON(res, 404, {error: 'Not Found'});
-
-    try {
-      const body = await readBody(req);
-      if (!body.name) return sendJSON(res, 400, {error: 'Missing name'});
-      items[index].name = body.name;
-      return sendJSON(res, 200, items[index]);
-    } catch {
-      return sendJSON(res, 400, {error: 'Invalid JSON'});
-    }
-  }
-
-  if (match && method === 'DELETE') {
-    const id = Number(match[1]);
-    const exists = items.some((i) => i.id === id);
-    if (!exists) return sendJSON(res, 404, {error: 'Not Found'});
-    items = items.filter((i) => i.id !== id);
-    res.writeHead(204);
-    return res.end();
-  }
-
-  return sendJSON(res, 404, {error: 'Resource not found'});
-});
-
 const hostname = '127.0.0.1';
 const port = 3000;
+
+const items = [
+  {id: 1, name: 'Mrcedes'},
+  {id: 2, name: 'Ford'},
+];
+
+const server = http.createServer((req, res) => {
+  console.log(`HTTP request: ${req.method} ${req.url}`);
+
+  // GET all items
+  if (req.method === 'GET' && req.url === '/items') {
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify(items));
+
+  // GET item by id
+  } else if (req.method === 'GET' && req.url.split('/')[1] === 'items') {
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    const requestedID = parseInt(req.url.split('/')[2]);
+    const foundItem = items.find(item => item.id === requestedID);
+    if (!foundItem) {
+      res.statusCode = 404;
+      res.end(JSON.stringify({error: 'Item not found'}));
+    } else {
+      res.end(JSON.stringify(foundItem));
+    }
+
+  // POST new item
+  } else if (req.method === 'POST' && req.url === '/items') {
+    let body = [];
+    req
+      .on('data', (chunk) => {
+        body.push(chunk);
+      })
+      .on('end', () => {
+        body = Buffer.concat(body).toString();
+        // at this point, `body` has the entire request body stored in it as a string
+        console.log('req body', body);
+        const newItem = JSON.parse(body);
+        // check latest id and add 1
+        newItem.id = items[items.length-1].id + 1;
+        items.push(newItem);
+        res.statusCode = 201;
+        res.end();
+      });
+
+  // DELETE item by id
+  } else if (req.method === 'DELETE' && req.url.split('/')[1] === 'items') {
+    const id = parseInt(req.url.split('/')[2]);
+    const index = items.findIndex(x => x.id === id);
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    if (Number.isNaN(id)) {
+      res.statusCode = 400;
+      res.end(JSON.stringify({error: 'Invalid id'}));
+    } else if (index === -1) {
+      res.statusCode = 404;
+      res.end(JSON.stringify({error: 'Item not found'}));
+    } else {
+      const removed = items.splice(index, 1)[0];
+      res.end(JSON.stringify({message: 'deleted', item: removed}));
+    }
+
+  // PUT update item name by id
+  } else if ((req.method === 'PUT' || req.method === 'PATCH') && req.url.split('/')[1] === 'items') {
+    const id = parseInt(req.url.split('/')[2]);
+    let body = [];
+    req
+      .on('data', chunk => body.push(chunk))
+      .on('end', () => {
+        body = Buffer.concat(body).toString();
+        let data;
+        try {
+          data = JSON.parse(body);
+        } catch (e) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({error: 'Bad JSON'}));
+          return;
+        }
+        const item = items.find(x => x.id === id);
+        res.setHeader('Content-Type', 'application/json');
+        if (Number.isNaN(id)) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({error: 'Invalid id'}));
+        } else if (!item) {
+          res.statusCode = 404;
+          res.end(JSON.stringify({error: 'Item not found'}));
+        } else if (!data || typeof data.name !== 'string' || data.name.trim() === '') {
+          res.statusCode = 400;
+          res.end(JSON.stringify({error: 'Missing or invalid "name"'}));
+        } else {
+          item.name = data.name;
+          res.statusCode = 200;
+          res.end(JSON.stringify(item));
+        }
+      });
+
+  // GET some generated data
+  } else if (req.method === 'GET' && req.url === '/random') {
+    const value = Math.floor(Math.random() * 1000);
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify({random: value}));
+
+  // POST generate uppercase from sent text
+  } else if (req.method === 'POST' && req.url === '/uppercase') {
+    let body = [];
+    req
+      .on('data', chunk => body.push(chunk))
+      .on('end', () => {
+        body = Buffer.concat(body).toString();
+        let data;
+        try {
+          data = JSON.parse(body);
+        } catch (e) {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({error: 'Bad JSON'}));
+          return;
+        }
+        if (!data || typeof data.text !== 'string') {
+          res.statusCode = 400;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({error: 'Missing "text"'}));
+          return;
+        }
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({uppercase: data.text.toUpperCase()}));
+      });
+
+  } else {
+    res.statusCode = 404;
+    res.end();
+  }
+});
+
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
