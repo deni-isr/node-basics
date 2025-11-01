@@ -8,8 +8,6 @@ export default [
       sourceType: 'module',
       globals: {...globals.node},
     },
-    rules: {
-    },
   },
   js.configs.recommended,
 ];
