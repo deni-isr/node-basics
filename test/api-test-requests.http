@@ -1,0 +1,97 @@
+# UCAD example API test http request
+
+### Note: Install VSCode REST Client extension to use this file
+
+### GET server root
+GET http://localhost:3000/
+
+
+## /media resource
+
+### GET /media
+GET http://localhost:3000/api/media
+
+### GET media item by id
+GET http://localhost:3000/api/media/9590
+
+### Add new media item
+POST http://localhost:3000/api/media
+content-type: application/json
+
+{
+  "filename": "jokukuva.jpg",
+  "title": "New image",
+  "description": "The description of the new image",
+  "user_id": 305,
+  "media_type": "image/jpeg"
+}
+
+### Update existing media item
+PUT http://localhost:3000/api/media/27
+content-type: application/json
+
+{
+  "title": "Basement modified",
+  "description": "Some new description",
+}
+
+### Delete existing media item
+DELETE http://localhost:3000/api/media/9590
+
+######################
+
+## /users resource
+
+### GET /users
+GET http://localhost:3000/api/users
+
+### GET user by id
+GET http://localhost:3000/api/users/27
+
+### Add new user
+POST http://localhost:3000/api/users
+content-type: application/json
+
+{
+  "TODO": "FIX THIS REQUEST" 
+}
+
+### Update existing user
+PUT http://localhost:3000/api/users/27
+content-type: application/json
+
+{
+  "TODO": "FIX THIS REQUEST" 
+}
+
+### Delete existing user
+DELETE http://localhost:3000/api/users/27
+
+
+##############################3
+
+## /items dummy resource mock data
+### GET /items
+GET http://localhost:3000/api/items
+
+### GET item by id
+GET http://localhost:3000/api/items/27
+
+### Add new item
+POST http://localhost:3000/api/items
+content-type: application/json
+
+{
+  "name": "New Item"
+}
+
+### Update existing item
+PUT http://localhost:3000/api/items/27
+content-type: application/json
+
+{
+  "name": "New name for the item"
+}
+
+### Delete existing item
+DELETE http://localhost:3000/api/items/27
