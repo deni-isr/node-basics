@@ -2,12 +2,20 @@ html
   head
     meta(charset='UTF-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
-    script(type='module' src='app.js' defer) 
+    style.
+      body { font-family: Arial, sans-serif; margin: 2em; }
+      code { background-color: #f4f4f4; padding: 2px 6px; border-radius: 4px; }
+      li { margin-bottom: 8px; }
     title= title
   body
     h1= title
     main
-      p= text
+      p= apiInfo
+      
+      h3 API Endpoints:
       ul
-        each item in items
-          li= item.name
+        each endpoint in endpoints
+          li
+            strong= endpoint.method
+            span  
+            code= endpoint.path

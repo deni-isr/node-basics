@@ -19,7 +19,7 @@ POST http://localhost:3000/api/media
 content-type: application/json
 
 {
-  "filename": "jokukuva.jpg",
+  "filename": "dbbd.jpg",
   "title": "New image",
   "description": "The description of the new image",
   "user_id": 305,
