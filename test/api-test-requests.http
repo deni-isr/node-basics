@@ -12,22 +12,22 @@ GET http://localhost:3000/
 GET http://localhost:3000/api/media
 
 ### GET media item by id
-GET http://localhost:3000/api/media/9590
+GET http://localhost:3000/api/media/1
 
 ### Add new media item
 POST http://localhost:3000/api/media
 content-type: application/json
 
 {
-  "filename": "dbbd.jpg",
-  "title": "New image",
+  "filename": "dbbdd.jpg",
+  "title": "image",
   "description": "The description of the new image",
-  "user_id": 305,
+  "user_id": 350,
   "media_type": "image/jpeg"
 }
 
 ### Update existing media item
-PUT http://localhost:3000/api/media/27
+PUT http://localhost:3000/api/media/1
 content-type: application/json
 
 {
@@ -46,26 +46,30 @@ DELETE http://localhost:3000/api/media/9590
 GET http://localhost:3000/api/users
 
 ### GET user by id
-GET http://localhost:3000/api/users/27
+GET http://localhost:3000/api/users/11
 
 ### Add new user
 POST http://localhost:3000/api/users
 content-type: application/json
 
 {
-  "TODO": "FIX THIS REQUEST" 
+  "username": "User",
+  "password": "userpassword",
+  "email": "user@example.com"
 }
 
 ### Update existing user
-PUT http://localhost:3000/api/users/27
+PUT http://localhost:3000/api/users/11
 content-type: application/json
 
 {
-  "TODO": "FIX THIS REQUEST" 
+  "username": "Joni",
+  "password": "jonipassword",
+  "email": "joni@example.com"
 }
 
 ### Delete existing user
-DELETE http://localhost:3000/api/users/27
+DELETE http://localhost:3000/api/users/11
 
 
 ##############################3
@@ -95,3 +99,20 @@ content-type: application/json
 
 ### Delete existing item
 DELETE http://localhost:3000/api/items/27
+
+######################
+
+### Post new like
+POST http://localhost:3000/api/likes/
+content-type: application/json
+
+{
+  "user_id": 1,
+  "media_id": 2
+}
+
+### Delete existing like
+DELETE http://localhost:3000/api/likes/1
+
+### Get likes for media item
+GET http://localhost:3000/api/likes/media/1
