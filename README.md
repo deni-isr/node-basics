@@ -9,16 +9,14 @@ INSERT-tarkistus: Uuden käyttäjän luominen onnistui.
 POISTA-tarkistus: Käyttäjä poistettu onnistuneesti.
 ![user delete](/screenshots/delete_user.png)
 
-Latauksen tarkistaminen
-
 Hae mediatiedoston tykkäysten kokonaismäärä.
-![post likes](/screenshots/post_likes)
+![post likes](/screenshots/post_likes.png)
 
 Uuden toiminnallisuuden testaus: Tykkäys lisätty onnistuneesti.
-![get likes](/screenshots/get_likes)
+![get likes](/screenshots/get_likes.png)
 
 phpMyAdmin Users
-![admin users](/screenshots/usersAdmin)
+![admin users](/screenshots/usersAdmin.png)
 
 phpMyAdmin Likes
-![admin likes](/screenshots/likesAdmin)
+![admin likes](/screenshots/likesAdmin.png)
