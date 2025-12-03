@@ -1,0 +1,96 @@
+## /Users resource
+
+### Get all users
+GET http://localhost:3000/api/users
+
+### Get user by id
+GET http://localhost:3000/api/users/21
+
+### Create new user
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "AuthTester",
+  "password": "AuthPassword",
+  "email": "authTest@auth.com"
+}
+
+### Update user
+PUT http://localhost:3000/api/users/22
+Content-Type: application/json
+
+{
+  "username": "Tomi",
+  "password": "jonipassword",
+  "email": "joni@example.com",
+  "user_level_id": 2
+}
+
+### User login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "Tester",
+  "password": "password12345"
+}
+
+### Delete User with Token
+@token = <eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMiwidXNlcl9sZXZlbF9pZCI6MiwiaWF0IjoxNzY0NzYzNzkxLCJleHAiOjE3NjQ4NTAxOTF9.CWWcDyE8-x_jfHsxEsjFVXefsWEQ77UGKVxWHUI9h9s>
+
+DELETE http://localhost:3000/api/users/21
+Authorization: Bearer {{token}}
+
+#################################
+
+### 1. Создание User A (Тот, кто пытается обновить)
+# @name create_a
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "user_a_tester",
+  "password": "apassword",
+  "email": "a_tester@example.com"
+}
+
+### 2. Создание User B (Цель обновления)
+# @name create_b
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "user_b_target",
+  "password": "bpassword",
+  "email": "b_target@example.com"
+}
+
+### 3. Логин User A и сохранение токена
+# @name login_a
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user_b_tester",
+  "password": "apassword"
+}
+
+### СОХРАНЕНИЕ ПЕРЕМЕННЫХ
+@user_a_token = {{login_a.response.body.token}}
+
+# Примечание: ID пользователей вы можете посмотреть через GET /api/users, 
+# либо в ответе на запросы 1 и 2. Предположим, что User B имеет ID 2.
+@user_b_id = 2
+
+### 4. ПОПЫТКА ОБНОВЛЕНИЯ ЧУЖИХ ДАННЫХ (ОЖИДАЕМ 403)
+# Этот запрос должен быть с токеном User A, но с ID User B (например, 2)
+PUT http://localhost:3000/api/users/{{user_b_id}}
+Authorization: Bearer {{user_a_token}}
+Content-Type: application/json
+
+{
+  "username": "user_b_hacked",
+  "email": "hacked@example.com",
+  "user_level_id": 2 
+}

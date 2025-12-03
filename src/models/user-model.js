@@ -67,4 +67,17 @@ const deleteUserById = async (id) => {
   }
 };
 
-export {listAllUsers, findUserById, addUser, updateUserById, deleteUserById};
+const findUserByUsername = async (username) => {
+  try {
+    const [rows] = await promisePool.execute(
+      'SELECT * FROM Users WHERE username = ?',
+      [username],
+    );
+    return rows[0];
+  } catch (e) {
+    console.error('error finding user by username', e.message);
+    return {error: e.message};
+  }
+};
+
+export {listAllUsers, findUserById, addUser, updateUserById, deleteUserById, findUserByUsername};

@@ -1,4 +1,5 @@
 import express from 'express';
+import {authenticateToken} from '../middlewares/authenticate.js';
 import {
   deleteUser,
   getUserById,
@@ -10,12 +11,8 @@ import {
 const userRouter = express.Router();
 
 userRouter
-  .route('/')
-  .get(getUsers) // GET /api/users
-  .post(postUser); // POST /api/users (add new user)
-
-userRouter
   .route('/:id')
+  .put(authenticateToken, putUser) // PUT /api/users/:id (update user)
   .get(getUserById) // GET /api/users/:id
   .put(putUser) // PUT /api/users/:id (update user)
   .delete(deleteUser); // DELETE /api/users/:id

@@ -4,6 +4,7 @@ import 'dotenv/config';
 import mediaRouter from './routes/media-router.js';
 import userRouter from './routes/user-router.js';
 import likeRouter from './routes/like-router.js';
+import authRouter from './routes/auth-router.js';
 
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
@@ -26,6 +27,8 @@ app.use('/api/media', mediaRouter);
 app.use('/api/users', userRouter);
 // Likes endpoints
 app.use('/api/likes', likeRouter);
+// Auth endpoints
+app.use('/api/auth', authRouter);
 
 // Start the server
 app.listen(port, hostname, () => {
