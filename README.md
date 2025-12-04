@@ -1,28 +1,15 @@
-### Back-end 5 osa A: Autentikaatio, validaattorit ja virheenkäsittely
+### Back-end 5 osa B: Autentikaatio, validaattorit ja virheenkäsittely
 
 Sain tehty 1-3 osiot
 
-Rekisteröityminen (uuden käyttäjän luominen).
-![new_user](/screenshots/new_user.png)
+User Validation
 
-Kaikkien käyttäjien luettelo.
-![all_users](/screenshots/all_users.png)
+![body_val](/screenshots/body_val.png)
 
-Käyttäjätiedot tunnuksella.
-![user_details](/screenshots/user_details.png)
+File validation
 
-Login
-![user_login](/screenshots/user_login.png)
+![file](/screenshots/file_val.png)
 
-Käyttäjätietojen päivittäminen.
-![updating_user](/screenshots/updating_user.png)
+Error Handling
 
-Käyttäjän poistaminen.
-![delet_user](/screenshots/delet_user.png)
-![delet_user_21](/screenshots/usre_21_delete.png)
-
-DELETE /api/users/22 WITHOUT Authorization: Bearer header...
-![erorr_401_unauthorized](/screenshots/error_recuest.png)
-
-Yritetään päivittää jonkun toisen tietoja.
-![erorr_401_unauthorized](/screenshots/update_other_users.png)
+![err](/screenshots/error.png)

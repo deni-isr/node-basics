@@ -1,0 +1,50 @@
+### Create new user
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "AuthTester",
+  "password": "mypassword123",
+  "email": "authTest@auth.com"
+}
+
+### User login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "AuthTester",
+  "password": "mypassword123"
+}
+
+### User Validation
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "1",
+  "password": "validpassword",
+  "email": "test@valid.com"
+}
+
+### File validation
+POST http://localhost:3000/api/media
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOCwidXNlcl9sZXZlbF9pZCI6MiwiaWF0IjoxNzY0ODU1NjA3LCJleHAiOjE3NjQ5NDIwMDd9.GT56IBBruqsAeIZdz3kPOsfO1EzNzQCBAl9oarU8VME
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="title"
+
+Valid Title
+--boundary
+Content-Disposition: form-data; name="description"
+This is a valid description for the media upload.
+--boundary
+Content-Disposition: form-data; name="file"; filename="test_file.txt"
+Content-Type: text/plain
+
+This is a test file content.
+--boundary--
+
+### Error Handling (Тест 404 Not Found)
+GET http://localhost:3000/api/non-existent-route

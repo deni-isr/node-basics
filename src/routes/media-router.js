@@ -1,5 +1,8 @@
 import express from 'express';
-import multer from 'multer';
+import {body} from 'express-validator';
+import {authenticateToken} from '../middlewares/authenticate.js';
+import {validationErrors} from '../middlewares/error-handlers.js';
+import upload from '../middlewares/upload.js';
 import {
   deleteMedia,
   getMedia,
@@ -10,15 +13,21 @@ import {
 
 // All media endpoints handled with express router
 const mediaRouter = express.Router();
-const upload = multer({dest: process.env.UPLOADS_PATH});
-
 
 mediaRouter
   .route('/')
   // Get all media items
   .get(getMedia)
-  // post new media item
-  .post(upload.single('file'), postMedia);
+  .post(
+    authenticateToken,
+    upload.single('file'),
+    
+    body('title').trim().isLength({min: 3, max: 50}).withMessage('Title must be 3-50 chars'),
+    body('description').trim().optional().isLength({max: 255}).withMessage('Description max 255 chars'),
+    
+    validationErrors,
+    postMedia
+  );
 
 mediaRouter
   .route('/:id')

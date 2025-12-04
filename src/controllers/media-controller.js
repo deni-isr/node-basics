@@ -16,30 +16,47 @@ const getMediaById = async (req, res) => {
     // add full filepath url to media object
     media.filepath = `${req.protocol}://${req.headers.host}/${process.env.UPLOADS_PATH}/${media.filename}`;
     res.json(media);
-  } else {
+  } else {    
     res.sendStatus(404);
   }
 };
 
-const postMedia = async (req, res) => {
-  let {title, description, user_id} = req.body;
-  // replace description with empty string if undefined
-  description = description ? description : '';
-  console.log('req file by multer', req.file);
+const postMedia = async (req, res, next) => {
+  
+  if (!req.file) {
+    const error = new Error('File is missing or invalid.');
+    error.status = 400; // 400 Bad Request
+    return next(error); 
+  }
+  
+  const {title, description} = req.body;
   const {filename, size, mimetype} = req.file;
-  if (filename && title && user_id) {
-    const result = await addMedia({
+  const user_id = req.user.user_id;
+
+  try {
+    // Media item data object
+    const newMedia = {
       user_id,
       filename,
       size,
       mimetype,
       title,
-      description,
-    });
-    res.status(201);
-    res.json({message: 'New media item added.', ...result});
-  } else {
-    res.sendStatus(400);
+      description: description || '', 
+    };
+    
+    const result = await addMedia(newMedia);
+
+    if (result.error) {
+       const error = new Error(result.error);
+       error.status = 500;
+       return next(error);
+    }
+    
+    res.status(201).json({message: 'New media item added.', ...result});
+    
+  } catch (e) {
+    console.error('postMedia error', e.message);
+    next(e); 
   }
 };
 

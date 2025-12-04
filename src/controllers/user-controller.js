@@ -25,7 +25,7 @@ const getUserById = async (req, res) => {
   }
 };
 
-const postUser = async (req, res) => {
+const postUser = async (req, res, next) => {
   const {username, password, email, user_level_id} = req.body;
   if (!username || !password || !email) {
     return res.status(400).json({message: 'Missing required fields'});
@@ -41,6 +41,18 @@ const postUser = async (req, res) => {
   } else {
     res.status(500).json(result);
   }
+
+  try {
+    // Attempt to add the new user
+    const newUserId = await addUser(req.body); 
+    res.status(201).json({message: 'New user added', user_id: newUserId});
+  } catch (e) {
+    // If there is an error, pass it to the error handler middleware
+    const error = new Error(`SQL Error: ${e.message}`);
+    error.status = 500;
+    next(error); 
+  }
+
 };
 
 const putUser = async (req, res) => {
