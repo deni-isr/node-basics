@@ -1,0 +1,22 @@
+### Create new user
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "Test",
+  "password": "pass112233",
+  "email": "authTest@oma.fi"
+}
+
+### User login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "Test",
+  "password": "pass112233"
+}
+
+### GET Test Security Headers
+GET http://localhost:3000/api/media
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMSwidXNlcl9sZXZlbF9pZCI6MiwiaWF0IjoxNzY0ODU4Mzk2LCJleHAiOjE3NjQ5NDQ3OTZ9.noK_6bsJ1TmNIdze6ObBX97oyoQXPM9axkRQxrLa5aY

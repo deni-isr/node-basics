@@ -1,5 +1,9 @@
 import express from 'express';
-// read .env file
+
+import helmet from 'helmet';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+
 import 'dotenv/config';
 import mediaRouter from './routes/media-router.js';
 import userRouter from './routes/user-router.js';
@@ -11,6 +15,18 @@ const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
 const app = express();
 
+app.use(helmet());
+
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+
+app.use(cors());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 min
+  max: 100, // Max 100 requests per IP
+  message: { message: "Too many requests, please try again later" }
+});
+app.use(limiter);
 
 // parse json from request bodies
 app.use(express.json());

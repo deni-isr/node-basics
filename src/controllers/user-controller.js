@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import {validationResult} from 'express-validator';
 import {
   addUser,
   deleteUserById,
@@ -26,33 +27,30 @@ const getUserById = async (req, res) => {
 };
 
 const postUser = async (req, res, next) => {
-  const {username, password, email, user_level_id} = req.body;
-  if (!username || !password || !email) {
-    return res.status(400).json({message: 'Missing required fields'});
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed');
+    error.status = 400; 
+    error.errors = errors.array();
+    return next(error);
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  const result = await addUser({username, password: hashedPassword, email, user_level_id});
-  
-  if (result.user_id) {
-    res.status(201).json({message: 'New user added.', ...result});
-  } else {
-    res.status(500).json(result);
-  }
+  const {username, password, email} = req.body;
 
   try {
-    // Attempt to add the new user
-    const newUserId = await addUser(req.body); 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUserId = await addUser({
+      username, 
+      password: hashedPassword,
+      email
+    });
+
     res.status(201).json({message: 'New user added', user_id: newUserId});
   } catch (e) {
-    // If there is an error, pass it to the error handler middleware
-    const error = new Error(`SQL Error: ${e.message}`);
-    error.status = 500;
-    next(error); 
+    next(e);
   }
-
 };
 
 const putUser = async (req, res) => {
@@ -93,4 +91,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export {getUsers, getUserById, postUser, putUser, deleteUser};
+export {postUser, getUsers, getUserById, putUser, deleteUser};

@@ -1,15 +1,19 @@
-### Back-end 5 osa B: Autentikaatio, validaattorit ja virheenkäsittely
+### Tehtävä: Back-end 6 osa A: Tietoturvallisuus ja dokumentointi
 
 Sain tehty 1-3 osiot
 
-User Validation
+Create a new user
 
-![body_val](/screenshots/body_val.png)
+![new user](/screenshots/new_user.png)
 
-File validation
+phpMyAdmin check screenshot
 
-![file](/screenshots/file_val.png)
+![phpMyAdmin](/screenshots/phpMyAdmin.png)
 
-Error Handling
+New uesr login
 
-![err](/screenshots/error.png)
+![User Login](/screenshots/User Login.png)
+
+Header check Security Headers
+
+![check](/screenshots/check.png)
