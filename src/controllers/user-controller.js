@@ -11,6 +11,8 @@ import {
 const getUsers = async (req, res) => {
   const result = await listAllUsers();
   if (!result.error) {
+    // ВНИМАНИЕ: Если listAllUsers возвращает объекты, содержащие хеш пароля,
+    // его нужно удалить перед отправкой клиенту!
     res.json(result);
   } else {
     res.status(500).json(result);
@@ -20,6 +22,8 @@ const getUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   const user = await findUserById(req.params.id);
   if (user) {
+    // УДАЛЕНИЕ ПАРОЛЯ ПЕРЕД ОТПРАВКОЙ
+    delete user.password; 
     res.json(user);
   } else {
     res.sendStatus(404);
@@ -52,6 +56,29 @@ const postUser = async (req, res, next) => {
     next(e);
   }
 };
+
+/**
+ * @apiDescription ВОЗВРАЩАЕТ ИНФОРМАЦИЮ О ТЕКУЩЕМ АВТОРИЗОВАННОМ ПОЛЬЗОВАТЕЛЕ.
+ * Данные берутся из req.user (после JWT-аутентификации).
+ */
+const getMe = async (req, res) => {
+    // req.user содержит user_id и user_level_id, декодированные из токена.
+    // Если вам нужны полные данные из БД, их нужно получить здесь.
+    try {
+        const user = await findUserById(req.user.user_id);
+        
+        if (user) {
+            delete user.password; // Удаляем хеш
+            res.json(user);
+        } else {
+            // Технически не должно произойти, если токен валиден
+            res.status(404).json({message: 'User not found, despite valid token.'});
+        }
+    } catch (e) {
+        res.status(500).json({message: 'Server error retrieving user data.'});
+    }
+};
+
 
 const putUser = async (req, res) => {
   const target_id = Number(req.params.id); 
@@ -91,4 +118,5 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export {postUser, getUsers, getUserById, putUser, deleteUser};
+// ЭКСПОРТ: Все функции, включая getMe, теперь доступны
+export {postUser, getUsers, getUserById, getMe, putUser, deleteUser};

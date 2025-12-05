@@ -15,7 +15,13 @@ const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
 const app = express();
 
-app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+    'style-src': ["'self'", "'unsafe-inline'"], 
+    'default-src': ["'self'"],
+  },
+}));
 
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
@@ -42,6 +48,9 @@ app.use('/api/users', userRouter);
 app.use('/api/likes', likeRouter);
 // Auth endpoints
 app.use('/api/auth', authRouter);
+
+// Serve API documentation
+app.use('/docs', express.static('docs'));
 
 // Use the 404 not found middleware
 app.use(notFoundHandler);

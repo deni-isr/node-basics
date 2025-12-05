@@ -1,0 +1,10 @@
+{
+  "name": "Media API",
+  "version": "1.0.0",
+  "description": "API documentation",
+  "title": "Media API",
+  "url": "http://localhost:3000/api",
+
+  "markdown": true,
+  "json": true
+}

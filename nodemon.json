@@ -1,0 +1,8 @@
+{
+  "events": {
+    "crash": "echo App crashed! Please check logs."
+  },
+  "delay": "1000",
+  "legacyWatch": true,
+  "signal": "SIGTERM"
+}

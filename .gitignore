@@ -3,4 +3,7 @@ node_modules/
 uploads/*
 !uploads/.gitkeep
 
+# Apidoc output folder
+/docs
+
 .env
