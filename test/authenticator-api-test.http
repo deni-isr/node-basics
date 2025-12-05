@@ -44,7 +44,7 @@ Authorization: Bearer {{token}}
 
 #################################
 
-### 1. Создание User A (Тот, кто пытается обновить)
+###
 # @name create_a
 POST http://localhost:3000/api/users
 Content-Type: application/json
@@ -55,7 +55,7 @@ Content-Type: application/json
   "email": "a_tester@example.com"
 }
 
-### 2. Создание User B (Цель обновления)
+###
 # @name create_b
 POST http://localhost:3000/api/users
 Content-Type: application/json
@@ -66,7 +66,7 @@ Content-Type: application/json
   "email": "b_target@example.com"
 }
 
-### 3. Логин User A и сохранение токена
+###
 # @name login_a
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
@@ -76,14 +76,12 @@ Content-Type: application/json
   "password": "apassword"
 }
 
-### СОХРАНЕНИЕ ПЕРЕМЕННЫХ
+###
 @user_a_token = {{login_a.response.body.token}}
 
-# Примечание: ID пользователей вы можете посмотреть через GET /api/users, 
-# либо в ответе на запросы 1 и 2. Предположим, что User B имеет ID 2.
 @user_b_id = 2
 
-### 4. ПОПЫТКА ОБНОВЛЕНИЯ ЧУЖИХ ДАННЫХ (ОЖИДАЕМ 403)
+###
 # Этот запрос должен быть с токеном User A, но с ID User B (например, 2)
 PUT http://localhost:3000/api/users/{{user_b_id}}
 Authorization: Bearer {{user_a_token}}
